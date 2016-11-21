@@ -1,51 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jax-ws xmlns="http://www.netbeans.org/ns/jax-ws/1">
   <services>
-    <service name="NewWebServiceFromWSDL">
-      <implementation-class>NiceView.NiceView</implementation-class>
-      <wsdl-url>http://Nichlas-PC:8080/NiceView/NiceViewService?wsdl</wsdl-url>
-      <local-wsdl-file>Nichlas-PC_8080/NiceView/NiceViewService.wsdl</local-wsdl-file>
-      <service-name>NiceViewService</service-name>
-      <port-name>NiceViewPort</port-name>
-      <package-name>com.niceview</package-name>
-      <catalog-file>catalog.xml</catalog-file>
-      <use-provider>false</use-provider>
-      <wsimport-options>
-        <wsimport-option>
-          <wsimport-option-name>extension</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>verbose</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>fork</wsimport-option-name>
-          <wsimport-option-value>false</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>xnocompile</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>xendorsed</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>target</wsimport-option-name>
-          <wsimport-option-value>2.1</wsimport-option-value>
-        </wsimport-option>
-      </wsimport-options>
-    </service>
-    <service name="LameDuck">
-      <implementation-class>LameDuck.LameDuck</implementation-class>
-      <wsdl-url>http://Nichlas-PC:8080/LameDuck/MainWebService?wsdl</wsdl-url>
-      <local-wsdl-file>Nichlas-PC_8080/LameDuck/MainWebService.wsdl</local-wsdl-file>
-      <service-name>MainWebService</service-name>
-      <port-name>LameDuckWebServicePort</port-name>
+  </services>
+  <clients>
+    <client name="MainWebService">
+      <wsdl-url>http://localhost:8080/LameDuck/MainWebService?wsdl</wsdl-url>
+      <local-wsdl-file>localhost_8080/LameDuck/MainWebService.wsdl</local-wsdl-file>
       <package-name>com.dtu.mmmngg</package-name>
       <catalog-file>catalog.xml</catalog-file>
-      <use-provider>false</use-provider>
       <wsimport-options>
         <wsimport-option>
           <wsimport-option-name>extension</wsimport-option-name>
@@ -60,6 +22,10 @@
           <wsimport-option-value>false</wsimport-option-value>
         </wsimport-option>
         <wsimport-option>
+          <wsimport-option-name>wsdlLocation</wsimport-option-name>
+          <wsimport-option-value>http://localhost:8080/LameDuck/MainWebService?wsdl</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
           <wsimport-option-name>xnocompile</wsimport-option-name>
           <wsimport-option-value>true</wsimport-option-value>
         </wsimport-option>
@@ -72,8 +38,87 @@
           <wsimport-option-value>2.1</wsimport-option-value>
         </wsimport-option>
       </wsimport-options>
-    </service>
-  </services>
-  <clients/>
+    </client>
+    <client name="BankService">
+      <wsdl-url>http://fastmoney.imm.dtu.dk:8080/BankService?wsdl</wsdl-url>
+      <local-wsdl-file>fastmoney.imm.dtu.dk_8080/BankService.wsdl</local-wsdl-file>
+      <package-name forceReplace="true">Fastmoney</package-name>
+      <catalog-file>catalog.xml</catalog-file>
+      <wsimport-options>
+        <wsimport-option>
+          <wsimport-option-name>extension</wsimport-option-name>
+          <wsimport-option-value>true</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>verbose</wsimport-option-name>
+          <wsimport-option-value>true</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>fork</wsimport-option-name>
+          <wsimport-option-value>false</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>wsdlLocation</wsimport-option-name>
+          <wsimport-option-value>http://fastmoney.imm.dtu.dk:8080/BankService?wsdl</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>xnocompile</wsimport-option-name>
+          <wsimport-option-value>true</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>xendorsed</wsimport-option-name>
+          <wsimport-option-value>true</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>package</wsimport-option-name>
+          <wsimport-option-value>Fastmoney</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>target</wsimport-option-name>
+          <wsimport-option-value>2.1</wsimport-option-value>
+        </wsimport-option>
+      </wsimport-options>
+    </client>
+    <client name="NiceViewService">
+      <wsdl-url>http://localhost:8080/NiceView_21-11-2016/NiceViewService?wsdl</wsdl-url>
+      <local-wsdl-file>localhost_8080/NiceView_21-11-2016/NiceViewService.wsdl</local-wsdl-file>
+      <package-name forceReplace="true">NiceViewPackage</package-name>
+      <catalog-file>catalog.xml</catalog-file>
+      <wsimport-options>
+        <wsimport-option>
+          <wsimport-option-name>extension</wsimport-option-name>
+          <wsimport-option-value>true</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>verbose</wsimport-option-name>
+          <wsimport-option-value>true</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>fork</wsimport-option-name>
+          <wsimport-option-value>false</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>wsdlLocation</wsimport-option-name>
+          <wsimport-option-value>http://localhost:8080/NiceView_21-11-2016/NiceViewService?wsdl</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>xnocompile</wsimport-option-name>
+          <wsimport-option-value>true</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>xendorsed</wsimport-option-name>
+          <wsimport-option-value>true</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>package</wsimport-option-name>
+          <wsimport-option-value>NiceViewPackage</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>target</wsimport-option-name>
+          <wsimport-option-value>2.1</wsimport-option-value>
+        </wsimport-option>
+      </wsimport-options>
+    </client>
+  </clients>
   <jsr109>true</jsr109>
 </jax-ws>

@@ -14,15 +14,15 @@
     <system systemId="http://Nichlas-PC:8080/LameDuck/MainWebService?xsd=1" uri="src/conf/xml-resources/web-services/LameDuck/wsdl/Nichlas-PC_8080/LameDuck/MainWebService.xsd_1.xsd"/>
     <system systemId="http://Nichlas-PC:8080/LameDuck/MainWebService?xsd=2" uri="src/conf/xml-resources/web-services/LameDuck/wsdl/Nichlas-PC_8080/LameDuck/MainWebService.xsd_2.xsd"/>
     <system systemId="http://Nichlas-PC:8080/LameDuck/MainWebService?xsd=3" uri="src/conf/xml-resources/web-services/LameDuck/wsdl/Nichlas-PC_8080/LameDuck/MainWebService.xsd_3.xsd"/>
-    <system systemId="http://localhost:8080/LameDuck/MainWebService?wsdl" uri="src/conf/xml-resources/web-service-references/MainWebService/wsdl/localhost_8080/LameDuck/MainWebService.wsdl"/>
-    <system systemId="http://localhost:8080/LameDuck/MainWebService?xsd=1" uri="src/conf/xml-resources/web-service-references/MainWebService/wsdl/localhost_8080/LameDuck/MainWebService.xsd_1.xsd"/>
-    <system systemId="http://localhost:8080/LameDuck/MainWebService?xsd=2" uri="src/conf/xml-resources/web-service-references/MainWebService/wsdl/localhost_8080/LameDuck/MainWebService.xsd_2.xsd"/>
-    <system systemId="http://localhost:8080/LameDuck/MainWebService?xsd=3" uri="src/conf/xml-resources/web-service-references/MainWebService/wsdl/localhost_8080/LameDuck/MainWebService.xsd_3.xsd"/>
-    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?wsdl" uri="src/conf/xml-resources/web-service-references/BankService/wsdl/fastmoney.imm.dtu.dk_8080/BankService.wsdl"/>
-    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?wsdl=1" uri="src/conf/xml-resources/web-service-references/BankService/wsdl/fastmoney.imm.dtu.dk_8080/BankService.wsdl_1.wsdl"/>
-    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1" uri="src/conf/xml-resources/web-service-references/BankService/wsdl/fastmoney.imm.dtu.dk_8080/BankService.xsd_1.xsd"/>
-    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=2" uri="src/conf/xml-resources/web-service-references/BankService/wsdl/fastmoney.imm.dtu.dk_8080/BankService.xsd_2.xsd"/>
-    <system systemId="http://localhost:8080/NiceView_21-11-2016/NiceViewService?wsdl" uri="src/conf/xml-resources/web-service-references/NiceViewService/wsdl/localhost_8080/NiceView_21-11-2016/NiceViewService.wsdl"/>
-    <system systemId="http://localhost:8080/NiceView_21-11-2016/NiceViewService?xsd=1" uri="src/conf/xml-resources/web-service-references/NiceViewService/wsdl/localhost_8080/NiceView_21-11-2016/NiceViewService.xsd_1.xsd"/>
-    <system systemId="http://localhost:8080/NiceView_21-11-2016/NiceViewService?xsd=2" uri="src/conf/xml-resources/web-service-references/NiceViewService/wsdl/localhost_8080/NiceView_21-11-2016/NiceViewService.xsd_2.xsd"/>
+    <system systemId="http://localhost:8080/LameDuck/MainWebService?wsdl" uri="wsdl/localhost_8080/LameDuck/MainWebService.wsdl"/>
+    <system systemId="http://localhost:8080/LameDuck/MainWebService?xsd=1" uri="wsdl/localhost_8080/LameDuck/MainWebService.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/LameDuck/MainWebService?xsd=2" uri="wsdl/localhost_8080/LameDuck/MainWebService.xsd_2.xsd"/>
+    <system systemId="http://localhost:8080/LameDuck/MainWebService?xsd=3" uri="wsdl/localhost_8080/LameDuck/MainWebService.xsd_3.xsd"/>
+    <system systemId="http://localhost:8080/NiceView_21-11-2016/NiceViewService?wsdl" uri="wsdl/localhost_8080/NiceView_21-11-2016/NiceViewService.wsdl"/>
+    <system systemId="http://localhost:8080/NiceView_21-11-2016/NiceViewService?xsd=1" uri="wsdl/localhost_8080/NiceView_21-11-2016/NiceViewService.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/NiceView_21-11-2016/NiceViewService?xsd=2" uri="wsdl/localhost_8080/NiceView_21-11-2016/NiceViewService.xsd_2.xsd"/>
+    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?wsdl" uri="wsdl/fastmoney.imm.dtu.dk_8080/BankService.wsdl"/>
+    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?wsdl=1" uri="wsdl/fastmoney.imm.dtu.dk_8080/BankService.wsdl_1.wsdl"/>
+    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1" uri="wsdl/fastmoney.imm.dtu.dk_8080/BankService.xsd_1.xsd"/>
+    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=2" uri="wsdl/fastmoney.imm.dtu.dk_8080/BankService.xsd_2.xsd"/>
 </catalog>

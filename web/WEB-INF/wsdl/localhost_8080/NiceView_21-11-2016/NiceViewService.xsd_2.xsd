@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI (http://jax-ws.java.net). RI's version is Metro/2.3.1-b419 (branches/2.3.1.x-7937; 2014-08-04T08:11:03+0000) JAXWS-RI/2.2.10-b140803.1500 JAXWS-API/2.2.11 JAXB-RI/2.2.10-b140802.1033 JAXB-API/2.2.12-b140109.1041 svn-revision#unknown. --><xs:schema xmlns:tns="http://NiceView.com/" xmlns:ns1="http://types.fastmoney.imm.dtu.dk" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://NiceView.com/">
 
-<xs:import namespace="http://types.fastmoney.imm.dtu.dk" schemaLocation="http://Nichlas-PC:8080/NiceView/NiceViewService?xsd=1"/>
+<xs:import namespace="http://types.fastmoney.imm.dtu.dk" schemaLocation="http://localhost:8080/NiceView_21-11-2016/NiceViewService?xsd=1"/>
 
 <xs:element name="Exception" type="tns:Exception"/>
 
@@ -16,6 +16,25 @@
 
 <xs:element name="getHotelsResponse" type="tns:getHotelsResponse"/>
 
+<xs:complexType name="bookHotel">
+<xs:sequence>
+<xs:element name="bookingNumber" type="xs:int"/>
+<xs:element name="creditcard" type="ns1:creditCardInfoType" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="bookHotelResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Exception">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="cancelHotel">
 <xs:sequence>
 <xs:element name="bookingNumber" type="xs:int"/>
@@ -25,12 +44,6 @@
 <xs:complexType name="cancelHotelResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="Exception">
-<xs:sequence>
-<xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -55,19 +68,6 @@
 <xs:element name="hotelReservationService" type="xs:string" minOccurs="0"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="price" type="xs:double"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="bookHotel">
-<xs:sequence>
-<xs:element name="bookingNumber" type="xs:int"/>
-<xs:element name="creditcard" type="ns1:creditCardInfoType" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="bookHotelResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 </xs:schema>

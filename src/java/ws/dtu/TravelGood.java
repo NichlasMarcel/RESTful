@@ -1,10 +1,9 @@
 package ws.dtu;
 
-import LameDuck.LameDuck;
-import NiceView.NiceView;
+import NiceViewPackage.Exception_Exception;
+import NiceViewPackage.Hotel;
+import com.dtu.mmmngg.CreditCardFaultMessage;
 import com.dtu.mmmngg.FlightInfoObject;
-
-import com.niceview.Hotel;
 import dk.dtu.imm.fastmoney.types.CreditCardInfoType;
 import java.net.URI;
 import java.text.SimpleDateFormat;
@@ -39,8 +38,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class TravelGood {
 
     //static private ArrayList<Itinerary> itineraries = new ArrayList<Itinerary>();
-    private static final NiceView niceView = new NiceView();
-    private static final LameDuck lameDuck = new LameDuck();
     private static final CreditCardInfoType creditcard = new CreditCardInfoType();
 
     private static final Map<Long, Itinerary> itineraries = new HashMap<>();
@@ -60,11 +57,11 @@ public class TravelGood {
 
         @GET
         @Produces({MediaType.APPLICATION_JSON})
-        public List<Hotel> getHotels(
+        public List<Hotel> getHotelsREST(
                 @QueryParam("city") String city,
                 @QueryParam("arrival") String arrival,
                 @QueryParam("departure") String departure) {
-
+            
             SimpleDateFormat converter = new SimpleDateFormat("dd/MM/yyyy");
 
             try {
@@ -79,7 +76,7 @@ public class TravelGood {
                 XMLGregorianCalendar arrival_date_xml = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
                 XMLGregorianCalendar departure_date_xml = DatatypeFactory.newInstance().newXMLGregorianCalendar(c2);
 
-                return niceView.getHotels(city, arrival_date_xml, departure_date_xml);
+                return getHotels(city, arrival_date_xml, departure_date_xml);
 
             } catch (Exception e) {
 
@@ -93,7 +90,7 @@ public class TravelGood {
 
         @GET
         @Produces({MediaType.APPLICATION_JSON})
-        public List<FlightInfoObject> getFlights(
+        public List<FlightInfoObject> getFlightsREST(
                 @QueryParam("from") String from,
                 @QueryParam("to") String to,
                 @QueryParam("date") String date) {
@@ -109,7 +106,7 @@ public class TravelGood {
 
                 XMLGregorianCalendar departure_date_xml = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
 
-                return lameDuck.getFlights(from, to, departure_date_xml);
+                return getFlights(from, to, departure_date_xml);
             } catch (Exception e) {
                 System.out.println(e);
                 exceptionMessage = e.getMessage();
@@ -145,7 +142,7 @@ public class TravelGood {
         @POST
         @Consumes("application/json")
         @Produces("application/json")
-        public Response createItinerary(Itinerary i) {
+        public Response createItineraryREST(Itinerary i) {
             itineraries.put((long) itineraries.keySet().size(), i);
             return Response.created(URI.create("itineraries/" + (itineraries.keySet().size() - 1))).build();
         }
@@ -153,7 +150,7 @@ public class TravelGood {
         @GET
         @Path("/{id}")
         @Produces("application/json")
-        public Response getItinerary(@PathParam("id") long id) {
+        public Response getItineraryREST(@PathParam("id") long id) {
             if (!itineraries.containsKey(id)) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
@@ -164,7 +161,7 @@ public class TravelGood {
         @Path("/{id}/book")
         @Consumes("text/plain")
         @Produces("application/json")
-        public Response bookItinerary(@PathParam("id") long id, String text) {
+        public Response bookItineraryREST(@PathParam("id") long id, String text) {
             return Response.ok(itineraries.get(id)).build();
         }
         
@@ -205,11 +202,11 @@ public class TravelGood {
         @POST
         @Consumes("application/json")
         @Produces("application/json")
-        private Response cancelItinerary(Itinerary itinerary) {
+        private Response cancelItineraryREST(Itinerary itinerary) {
             boolean success = true;
             for (String bookingHotel : itinerary.hotelsBookingNumbers) {
                 try {
-                    niceView.cancelHotel(Integer.parseInt(bookingHotel));
+                    cancelHotel(Integer.parseInt(bookingHotel));
                 } catch (Exception e) {
                     System.out.println("Something fucked up when cancelling");
                     success = false;
@@ -221,7 +218,7 @@ public class TravelGood {
             for (String bookingFlight : itinerary.flightsBookingNumbers) {
                 try {
                     // Skal ændres
-                    lameDuck.cancelFlights("" + bookingFlight, 100, creditcard);
+                    cancelFlights("" + bookingFlight, 100, creditcard);
                 } catch (Exception e) {
                     System.out.println("Something fucked up when cancelling");
                     success = false;
@@ -309,5 +306,42 @@ public class TravelGood {
             }
         }
 
+    }
+
+
+    private static boolean bookFlights(java.lang.String bookingNumber, dk.dtu.imm.fastmoney.types.CreditCardInfoType creditCard) throws CreditCardFaultMessage {
+        com.dtu.mmmngg.MainWebService service = new com.dtu.mmmngg.MainWebService();
+        com.dtu.mmmngg.LameDuckWebService port = service.getLameDuckWebServicePort();
+        return port.bookFlights(bookingNumber, creditCard);
+    }
+
+    private static boolean cancelFlights(java.lang.String bookingnumber, int amount, dk.dtu.imm.fastmoney.types.CreditCardInfoType creditCard) throws CreditCardFaultMessage {
+        com.dtu.mmmngg.MainWebService service = new com.dtu.mmmngg.MainWebService();
+        com.dtu.mmmngg.LameDuckWebService port = service.getLameDuckWebServicePort();
+        return port.cancelFlights(bookingnumber, amount, creditCard);
+    }
+
+    private static java.util.List<com.dtu.mmmngg.FlightInfoObject> getFlights(java.lang.String from, java.lang.String toDestination, javax.xml.datatype.XMLGregorianCalendar arg2) {
+        com.dtu.mmmngg.MainWebService service = new com.dtu.mmmngg.MainWebService();
+        com.dtu.mmmngg.LameDuckWebService port = service.getLameDuckWebServicePort();
+        return port.getFlights(from, toDestination, arg2);
+    }
+
+    private Boolean bookHotel(int bookingNumber, NiceViewPackage.CreditCardInfoType creditcard) throws Exception_Exception {
+        NiceViewPackage.NiceViewService service = new NiceViewPackage.NiceViewService();
+        NiceViewPackage.NiceView port = service.getNiceViewPort();
+        return port.bookHotel(bookingNumber, creditcard);
+    }
+
+    private static Boolean cancelHotel(int bookingNumber) throws Exception_Exception {
+        NiceViewPackage.NiceViewService service = new NiceViewPackage.NiceViewService();
+        NiceViewPackage.NiceView port = service.getNiceViewPort();
+        return port.cancelHotel(bookingNumber);
+    }
+
+    private static java.util.List<NiceViewPackage.Hotel> getHotels(java.lang.String city, javax.xml.datatype.XMLGregorianCalendar arrival, javax.xml.datatype.XMLGregorianCalendar departure) {
+        NiceViewPackage.NiceViewService service = new NiceViewPackage.NiceViewService();
+        NiceViewPackage.NiceView port = service.getNiceViewPort();
+        return port.getHotels(city, arrival, departure);
     }
 }
