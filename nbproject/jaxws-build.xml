@@ -60,7 +60,7 @@
     </target>
     <target name="wsimport-client-NiceViewService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/NiceViewService"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/NiceViewService" destdir="${build.generated.dir}/jax-wsCache/NiceViewService" wsdl="${basedir}/${conf-dir}xml-resources/web-service-references/NiceViewService/wsdl/localhost_8080/NiceView_21-11-2016/NiceViewService.wsdl" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/NiceView_21-11-2016/NiceViewService?wsdl" xnocompile="true" xendorsed="true" package="NiceViewPackage" target="2.1">
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/NiceViewService" destdir="${build.generated.dir}/jax-wsCache/NiceViewService" wsdl="${basedir}/${conf-dir}xml-resources/web-service-references/NiceViewService/wsdl/localhost_8080/NiceView_21-11-2016/NiceViewService.wsdl" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/NiceView_21-11-2016/NiceViewService?wsdl" xnocompile="true" xendorsed="true" target="2.1">
             <depends file="${basedir}/${conf-dir}xml-resources/web-service-references/NiceViewService/wsdl/localhost_8080/NiceView_21-11-2016/NiceViewService.wsdl"/>
             <produces dir="${build.generated.dir}/jax-wsCache/NiceViewService"/>
         </wsimport>
@@ -71,7 +71,7 @@
         </copy>
     </target>
     <target name="wsimport-client-clean-NiceViewService" depends="-init-project">
-        <delete dir="${build.generated.sources.dir}/jax-ws/NiceViewPackage"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/com/niceview"/>
         <delete dir="${build.generated.dir}/jax-wsCache/NiceViewService"/>
     </target>
     <target name="wsimport-client-generate" depends="wsimport-client-MainWebService, wsimport-client-BankService, wsimport-client-NiceViewService"/>

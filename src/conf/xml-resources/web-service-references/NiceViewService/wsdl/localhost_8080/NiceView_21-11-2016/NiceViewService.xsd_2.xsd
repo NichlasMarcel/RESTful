@@ -57,7 +57,23 @@
 
 <xs:complexType name="getHotelsResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:hotel" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="return" type="tns:hotelReservationWrapper" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="hotelReservationWrapper">
+<xs:sequence>
+<xs:element name="list" type="tns:hotelReservation" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="hotelReservation">
+<xs:sequence>
+<xs:element name="bookingNumber" type="xs:int"/>
+<xs:element name="hotel" type="tns:hotel" minOccurs="0"/>
+<xs:element name="timePeriod" type="tns:dateRange" minOccurs="0"/>
+<xs:element name="reserved" type="xs:boolean"/>
+<xs:element name="creditCardInfoType" type="ns1:creditCardInfoType" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -68,6 +84,13 @@
 <xs:element name="hotelReservationService" type="xs:string" minOccurs="0"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="price" type="xs:double"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="dateRange">
+<xs:sequence>
+<xs:element name="end" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="start" type="xs:dateTime" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 </xs:schema>

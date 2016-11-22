@@ -5,6 +5,7 @@
  */
 package ws.dtu;
 
+import com.niceview.HotelReservation;
 import java.util.ArrayList;
 
 /**
@@ -14,13 +15,13 @@ import java.util.ArrayList;
 public class Itinerary {
 
     ArrayList<String> flightsBookingNumbers = new ArrayList<String>();
-    ArrayList<String> hotelsBookingNumbers = new ArrayList<String>();
+    ArrayList<HotelReservation> hotelsReservations = new ArrayList<HotelReservation>();
 
     public void addFlight(String bookingNumber) {
         flightsBookingNumbers.add(bookingNumber);
     }
 
-    public void addHotel(String bookingNumber) {
-        hotelsBookingNumbers.add(bookingNumber);
+    public void addHotel(HotelReservation hotelReservation) {
+        hotelsReservations.add(hotelReservation);
     }
 }

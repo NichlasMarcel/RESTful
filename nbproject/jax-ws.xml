@@ -82,7 +82,7 @@
     <client name="NiceViewService">
       <wsdl-url>http://localhost:8080/NiceView_21-11-2016/NiceViewService?wsdl</wsdl-url>
       <local-wsdl-file>localhost_8080/NiceView_21-11-2016/NiceViewService.wsdl</local-wsdl-file>
-      <package-name forceReplace="true">NiceViewPackage</package-name>
+      <package-name>com.niceview</package-name>
       <catalog-file>catalog.xml</catalog-file>
       <wsimport-options>
         <wsimport-option>
@@ -108,10 +108,6 @@
         <wsimport-option>
           <wsimport-option-name>xendorsed</wsimport-option-name>
           <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>package</wsimport-option-name>
-          <wsimport-option-value>NiceViewPackage</wsimport-option-value>
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>target</wsimport-option-name>

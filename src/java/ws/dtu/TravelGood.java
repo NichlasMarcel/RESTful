@@ -1,18 +1,20 @@
 package ws.dtu;
 
-import NiceViewPackage.Exception_Exception;
-import NiceViewPackage.Hotel;
 import com.dtu.mmmngg.CreditCardFaultMessage;
-import com.dtu.mmmngg.FlightInfoObject;
+import com.dtu.mmmngg.FlightInfoObjectWrapper;
+import com.niceview.Exception_Exception;
+import com.niceview.HotelReservation;
+import com.niceview.HotelReservationWrapper;
 import dk.dtu.imm.fastmoney.types.CreditCardInfoType;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -41,6 +43,9 @@ public class TravelGood {
     private static final CreditCardInfoType creditcard = new CreditCardInfoType();
 
     private static final Map<Long, Itinerary> itineraries = new HashMap<>();
+    
+    private static ArrayList<String> booked_flights = new ArrayList();
+    private static ArrayList<String> booked_hotels = new ArrayList();
 
     public TravelGood() {
         creditcard.setName("Anne Strandberg");
@@ -57,11 +62,11 @@ public class TravelGood {
 
         @GET
         @Produces({MediaType.APPLICATION_JSON})
-        public List<Hotel> getHotelsREST(
+        public HotelReservationWrapper getHotelsREST(
                 @QueryParam("city") String city,
                 @QueryParam("arrival") String arrival,
                 @QueryParam("departure") String departure) {
-            
+
             SimpleDateFormat converter = new SimpleDateFormat("dd/MM/yyyy");
 
             try {
@@ -81,7 +86,7 @@ public class TravelGood {
             } catch (Exception e) {
 
             }
-            return new ArrayList<Hotel>();
+            return new HotelReservationWrapper();
         }
     }
 
@@ -90,7 +95,7 @@ public class TravelGood {
 
         @GET
         @Produces({MediaType.APPLICATION_JSON})
-        public List<FlightInfoObject> getFlightsREST(
+        public FlightInfoObjectWrapper getFlightsREST(
                 @QueryParam("from") String from,
                 @QueryParam("to") String to,
                 @QueryParam("date") String date) {
@@ -116,10 +121,10 @@ public class TravelGood {
 //            flight.setBookingNumber(exceptionMessage);
 //            fuck.add(flight);
 //            return fuck;
-            return new ArrayList<FlightInfoObject>();
+            return new FlightInfoObjectWrapper();
         }
     }
-    
+
 //    @Path("TravelGood/{id}/book")
 //    public static class TravelGoodItinerariesBook {
 //        @GET
@@ -129,7 +134,6 @@ public class TravelGood {
 //              return Response.ok().build();
 //        }
 //    }
-
     @Path("TravelGood/itineraries")
     public static class TravelGoodItineraries {
 
@@ -144,7 +148,7 @@ public class TravelGood {
         @Produces("application/json")
         public Response createItineraryREST(Itinerary i) {
             itineraries.put((long) itineraries.keySet().size(), i);
-            return Response.created(URI.create("itineraries/" + (itineraries.keySet().size() - 1))).build();
+            return Response.created(URI.create("TravelGood/itineraries/" + (itineraries.keySet().size() - 1))).build();
         }
 
         @GET
@@ -156,7 +160,7 @@ public class TravelGood {
             }
             return Response.ok(itineraries.get(id)).build();
         }
-        
+
         @POST
         @Path("/{id}/book")
         @Consumes("text/plain")
@@ -164,7 +168,7 @@ public class TravelGood {
         public Response bookItineraryREST(@PathParam("id") long id, String text) {
             return Response.ok(itineraries.get(id)).build();
         }
-        
+
 //        @GET
 //        @Path("/{id}/book")
 //        @Produces("application/json")
@@ -198,15 +202,14 @@ public class TravelGood {
 ////            }
 ////            return Response.accepted().build();
 //        }
-
         @POST
         @Consumes("application/json")
         @Produces("application/json")
         private Response cancelItineraryREST(Itinerary itinerary) {
             boolean success = true;
-            for (String bookingHotel : itinerary.hotelsBookingNumbers) {
+            for (HotelReservation bookingHotel : itinerary.hotelsReservations) {
                 try {
-                    cancelHotel(Integer.parseInt(bookingHotel));
+                    cancelHotel(bookingHotel.getBookingNumber());
                 } catch (Exception e) {
                     System.out.println("Something fucked up when cancelling");
                     success = false;
@@ -224,37 +227,38 @@ public class TravelGood {
                     success = false;
                 }
             }
-            
-            if(!success)
+
+            if (!success) {
                 return Response.status(Response.Status.CONFLICT).build();
-            
+            }
+
             return Response.accepted().build();
         }
 
         @POST
         @Path("/{id}/hotels")
-        @Consumes("text/plain")
+        @Consumes("application/json")
         @Produces("application/json")
-        public Response addHotel(
+        public Response addHotelREST(
                 @PathParam("id") long id,
-                String bookingNumber) {
+                HotelReservation hotelReservation) {
 
             if (!itineraries.containsKey(id)) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
             Itinerary itinerary = itineraries.get(id);
-            itinerary.addHotel(bookingNumber);
+            itinerary.addHotel(hotelReservation);
 
 //            return Response.ok().build();
             return Response.created(URI.create("itineraries/" + id + "/hotels/"
-                    + bookingNumber)).build();
+                    + hotelReservation)).build();
         }
 
         @POST
         @Path("/{id}/flights")
         @Consumes("text/plain")
         @Produces("application/json")
-        public Response addFlight(
+        public Response addFlightREST(
                 @PathParam("id") long id,
                 int bookingNumber) {
 
@@ -269,27 +273,31 @@ public class TravelGood {
 
         @DELETE
         @Path("/{id}/hotels/{bookingNumber}")
-        public Response removeHotel(
+        public Response removeHotelREST(
                 @PathParam("id") long id,
-                @PathParam("bookingNumber") String bookingNumber) {
+                @PathParam("bookingNumber") int bookingNumber) {
             // Check that the itinerary is there
             if (!itineraries.containsKey(id)) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
             Itinerary itinerary = itineraries.get(id);
             // Find the requested hotel
-            if (itinerary.hotelsBookingNumbers.contains(bookingNumber)) {
-                itinerary.hotelsBookingNumbers.remove(bookingNumber);
-                return Response.accepted().build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).build();
 
+            for (HotelReservation res : itinerary.hotelsReservations) {
+                if (res.getBookingNumber() == bookingNumber) {
+                    itinerary.hotelsReservations.remove(res);
+                    return Response.accepted().build();
+
+                }
             }
+
+            return Response.status(Response.Status.NOT_FOUND).build();
+
         }
 
         @DELETE
         @Path("/{id}/flights/{bookingNumber}")
-        public Response removeFlight(
+        public Response removeFlightREST(
                 @PathParam("id") long id,
                 @PathParam("bookingNumber") String bookingNumber) {
             // Check that the itinerary is there
@@ -308,7 +316,6 @@ public class TravelGood {
 
     }
 
-
     private static boolean bookFlights(java.lang.String bookingNumber, dk.dtu.imm.fastmoney.types.CreditCardInfoType creditCard) throws CreditCardFaultMessage {
         com.dtu.mmmngg.MainWebService service = new com.dtu.mmmngg.MainWebService();
         com.dtu.mmmngg.LameDuckWebService port = service.getLameDuckWebServicePort();
@@ -321,27 +328,28 @@ public class TravelGood {
         return port.cancelFlights(bookingnumber, amount, creditCard);
     }
 
-    private static java.util.List<com.dtu.mmmngg.FlightInfoObject> getFlights(java.lang.String from, java.lang.String toDestination, javax.xml.datatype.XMLGregorianCalendar arg2) {
+    private static FlightInfoObjectWrapper getFlights(java.lang.String from, java.lang.String toDestination, javax.xml.datatype.XMLGregorianCalendar arg2) {
         com.dtu.mmmngg.MainWebService service = new com.dtu.mmmngg.MainWebService();
         com.dtu.mmmngg.LameDuckWebService port = service.getLameDuckWebServicePort();
         return port.getFlights(from, toDestination, arg2);
     }
 
-    private Boolean bookHotel(int bookingNumber, NiceViewPackage.CreditCardInfoType creditcard) throws Exception_Exception {
-        NiceViewPackage.NiceViewService service = new NiceViewPackage.NiceViewService();
-        NiceViewPackage.NiceView port = service.getNiceViewPort();
+    private static Boolean bookHotel(int bookingNumber, dk.dtu.imm.fastmoney.types.CreditCardInfoType creditcard) throws Exception_Exception {
+        com.niceview.NiceViewService service = new com.niceview.NiceViewService();
+        com.niceview.NiceView port = service.getNiceViewPort();
         return port.bookHotel(bookingNumber, creditcard);
     }
 
     private static Boolean cancelHotel(int bookingNumber) throws Exception_Exception {
-        NiceViewPackage.NiceViewService service = new NiceViewPackage.NiceViewService();
-        NiceViewPackage.NiceView port = service.getNiceViewPort();
+        com.niceview.NiceViewService service = new com.niceview.NiceViewService();
+        com.niceview.NiceView port = service.getNiceViewPort();
         return port.cancelHotel(bookingNumber);
     }
 
-    private static java.util.List<NiceViewPackage.Hotel> getHotels(java.lang.String city, javax.xml.datatype.XMLGregorianCalendar arrival, javax.xml.datatype.XMLGregorianCalendar departure) {
-        NiceViewPackage.NiceViewService service = new NiceViewPackage.NiceViewService();
-        NiceViewPackage.NiceView port = service.getNiceViewPort();
+    private static HotelReservationWrapper getHotels(java.lang.String city, javax.xml.datatype.XMLGregorianCalendar arrival, javax.xml.datatype.XMLGregorianCalendar departure) {
+        com.niceview.NiceViewService service = new com.niceview.NiceViewService();
+        com.niceview.NiceView port = service.getNiceViewPort();
         return port.getHotels(city, arrival, departure);
     }
+
 }

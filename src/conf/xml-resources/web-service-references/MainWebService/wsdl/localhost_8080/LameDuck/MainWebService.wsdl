@@ -31,12 +31,6 @@
 <message name="cancelFlightsResponse">
 <part name="parameters" element="tns:cancelFlightsResponse"/>
 </message>
-<message name="hello">
-<part name="parameters" element="tns:hello"/>
-</message>
-<message name="helloResponse">
-<part name="parameters" element="tns:helloResponse"/>
-</message>
 <portType name="LameDuckWebService">
 <operation name="getFlights">
 <input wsam:Action="http://MMMNGG.dtu.com/LameDuckWebService/getFlightsRequest" message="tns:getFlights"/>
@@ -51,10 +45,6 @@
 <input wsam:Action="http://MMMNGG.dtu.com/LameDuckWebService/cancelFlightsRequest" message="tns:cancelFlights"/>
 <output wsam:Action="http://MMMNGG.dtu.com/LameDuckWebService/cancelFlightsResponse" message="tns:cancelFlightsResponse"/>
 <fault message="tns:CreditCardFaultMessage" name="CreditCardFaultMessage" wsam:Action="http://MMMNGG.dtu.com/LameDuckWebService/cancelFlights/Fault/CreditCardFaultMessage"/>
-</operation>
-<operation name="hello">
-<input wsam:Action="http://MMMNGG.dtu.com/LameDuckWebService/helloRequest" message="tns:hello"/>
-<output wsam:Action="http://MMMNGG.dtu.com/LameDuckWebService/helloResponse" message="tns:helloResponse"/>
 </operation>
 </portType>
 <binding name="LameDuckWebServicePortBinding" type="tns:LameDuckWebService">
@@ -91,15 +81,6 @@
 <fault name="CreditCardFaultMessage">
 <soap:fault name="CreditCardFaultMessage" use="literal"/>
 </fault>
-</operation>
-<operation name="hello">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
 </operation>
 </binding>
 <service name="MainWebService">

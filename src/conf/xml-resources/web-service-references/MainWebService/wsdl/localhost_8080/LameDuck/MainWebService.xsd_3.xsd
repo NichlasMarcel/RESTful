@@ -14,10 +14,6 @@
 
 <xs:element name="getFlightsResponse" type="tns:getFlightsResponse"/>
 
-<xs:element name="hello" type="tns:hello"/>
-
-<xs:element name="helloResponse" type="tns:helloResponse"/>
-
 <xs:complexType name="cancelFlights">
 <xs:sequence>
 <xs:element name="bookingnumber" type="xs:string" minOccurs="0"/>
@@ -42,30 +38,12 @@
 
 <xs:complexType name="getFlightsResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:flightInfoObject" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="return" type="tns:flightInfoObjectWrapper" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="flightInfoObject">
-<xs:sequence>
-<xs:element name="bookingNumber" type="xs:string" minOccurs="0"/>
-<xs:element name="dateOfTravel" type="xs:dateTime" minOccurs="0"/>
-<xs:element name="FO" type="tns:flightObject" minOccurs="0"/>
-<xs:element name="nameOfAirline" type="xs:string" minOccurs="0"/>
-<xs:element name="price" type="xs:int"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="flightObject">
-<xs:sequence>
-<xs:element name="carrier" type="xs:string" minOccurs="0"/>
-<xs:element name="destinationAirport" type="xs:string" minOccurs="0"/>
-<xs:element name="endDate" type="xs:dateTime" minOccurs="0"/>
-<xs:element name="endTime" type="xs:string" minOccurs="0"/>
-<xs:element name="startAirport" type="xs:string" minOccurs="0"/>
-<xs:element name="startDate" type="xs:dateTime" minOccurs="0"/>
-<xs:element name="startTime" type="xs:string" minOccurs="0"/>
-</xs:sequence>
+<xs:complexType name="flightInfoObjectWrapper">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="bookFlights">
@@ -78,18 +56,6 @@
 <xs:complexType name="bookFlightsResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="hello">
-<xs:sequence>
-<xs:element name="name" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="helloResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 </xs:schema>
