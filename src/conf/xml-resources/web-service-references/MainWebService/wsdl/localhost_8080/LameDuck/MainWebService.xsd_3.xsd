@@ -2,6 +2,10 @@
 
 <xs:import namespace="http://types.fastmoney.imm.dtu.dk" schemaLocation="http://localhost:8080/LameDuck/MainWebService?xsd=1"/>
 
+<xs:element name="WorkAround" type="tns:WorkAround"/>
+
+<xs:element name="WorkAroundResponse" type="tns:WorkAroundResponse"/>
+
 <xs:element name="bookFlights" type="tns:bookFlights"/>
 
 <xs:element name="bookFlightsResponse" type="tns:bookFlightsResponse"/>
@@ -13,6 +17,40 @@
 <xs:element name="getFlights" type="tns:getFlights"/>
 
 <xs:element name="getFlightsResponse" type="tns:getFlightsResponse"/>
+
+<xs:complexType name="WorkAround">
+<xs:sequence>
+<xs:element name="flight" type="tns:flightInfoObject" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="flightInfoObject">
+<xs:sequence>
+<xs:element name="bookingNumber" type="xs:string" minOccurs="0"/>
+<xs:element name="dateOfTravel" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="FO" type="tns:flightObject" minOccurs="0"/>
+<xs:element name="nameOfAirline" type="xs:string" minOccurs="0"/>
+<xs:element name="price" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="flightObject">
+<xs:sequence>
+<xs:element name="carrier" type="xs:string" minOccurs="0"/>
+<xs:element name="destinationAirport" type="xs:string" minOccurs="0"/>
+<xs:element name="endDate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="endTime" type="xs:string" minOccurs="0"/>
+<xs:element name="startAirport" type="xs:string" minOccurs="0"/>
+<xs:element name="startDate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="startTime" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="WorkAroundResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:flightInfoObject" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
 
 <xs:complexType name="cancelFlights">
 <xs:sequence>
@@ -38,12 +76,8 @@
 
 <xs:complexType name="getFlightsResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:flightInfoObjectWrapper" minOccurs="0"/>
+<xs:element name="return" type="tns:flightInfoObject" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="flightInfoObjectWrapper">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="bookFlights">

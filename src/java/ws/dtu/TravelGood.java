@@ -1,10 +1,10 @@
 package ws.dtu;
 
 import com.dtu.mmmngg.CreditCardFaultMessage;
-import com.dtu.mmmngg.FlightInfoObjectWrapper;
+import com.dtu.mmmngg.FlightInfoObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.niceview.Exception_Exception;
 import com.niceview.HotelReservation;
-import com.niceview.HotelReservationWrapper;
 import dk.dtu.imm.fastmoney.types.CreditCardInfoType;
 import java.net.URI;
 import java.text.SimpleDateFormat;
@@ -13,12 +13,15 @@ import java.util.Date;
 
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import static javax.ws.rs.HttpMethod.PUT;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -40,29 +43,28 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class TravelGood {
 
     //static private ArrayList<Itinerary> itineraries = new ArrayList<Itinerary>();
-    private static final CreditCardInfoType creditcard = new CreditCardInfoType();
+    private static final ArrayList<Itinerary_2> itineraries = new ArrayList<>();
 
-    private static final Map<Long, Itinerary> itineraries = new HashMap<>();
-    
-    private static ArrayList<String> booked_flights = new ArrayList();
-    private static ArrayList<String> booked_hotels = new ArrayList();
+//    private static ArrayList<FlightBooked> booked_flights = new ArrayList();
+//    private static ArrayList<HotelBooked> booked_hotels = new ArrayList();
+    private static final ArrayList<Booking> booked_flights = new ArrayList<>();
+    private static final ArrayList<Booking> booked_hotels = new ArrayList<>();
 
     public TravelGood() {
-        creditcard.setName("Anne Strandberg");
-        creditcard.setNumber("50408816");
-        CreditCardInfoType.ExpirationDate exp = new CreditCardInfoType.ExpirationDate();
-        exp.setMonth(5);
-        exp.setYear(9);
-        creditcard.setExpirationDate(exp);
-        //itineraries.put((long) 1, new Itinerary());
+
+        Itinerary_2 i = new Itinerary_2();
+        i.flightsBookingNumbers.add(new Booking("safasdfa", true));
+        itineraries.add(i);
     }
+
+
 
     @Path("TravelGood/hotels")
     public static class TravelGoodHotels {
 
         @GET
         @Produces({MediaType.APPLICATION_JSON})
-        public HotelReservationWrapper getHotelsREST(
+        public GetHotelsResponse getHotelsREST(
                 @QueryParam("city") String city,
                 @QueryParam("arrival") String arrival,
                 @QueryParam("departure") String departure) {
@@ -81,12 +83,14 @@ public class TravelGood {
                 XMLGregorianCalendar arrival_date_xml = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
                 XMLGregorianCalendar departure_date_xml = DatatypeFactory.newInstance().newXMLGregorianCalendar(c2);
 
-                return getHotels(city, arrival_date_xml, departure_date_xml);
+                GetHotelsResponse response = new GetHotelsResponse();
+                response.list.addAll(getHotels(city, arrival_date_xml, departure_date_xml));
+                return response;
 
             } catch (Exception e) {
 
             }
-            return new HotelReservationWrapper();
+            return new GetHotelsResponse();
         }
     }
 
@@ -95,7 +99,7 @@ public class TravelGood {
 
         @GET
         @Produces({MediaType.APPLICATION_JSON})
-        public FlightInfoObjectWrapper getFlightsREST(
+        public GetFlightsResponse getFlightsREST(
                 @QueryParam("from") String from,
                 @QueryParam("to") String to,
                 @QueryParam("date") String date) {
@@ -103,15 +107,17 @@ public class TravelGood {
             SimpleDateFormat converter = new SimpleDateFormat("dd/MM/yyyy");
             String exceptionMessage = "";
             try {
-                Date departure_date = converter.parse(date);
+                Date date_obj = converter.parse(date);
 
                 GregorianCalendar c = new GregorianCalendar();
 
-                c.setTime(departure_date);
+                c.setTime(date_obj);
 
-                XMLGregorianCalendar departure_date_xml = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-
-                return getFlights(from, to, departure_date_xml);
+                XMLGregorianCalendar date_xml = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+                //return new GetFlightsResponse(test);
+                GetFlightsResponse response = new GetFlightsResponse();
+                response.list.addAll(getFlights(from, to, date_xml));
+                return response;
             } catch (Exception e) {
                 System.out.println(e);
                 exceptionMessage = e.getMessage();
@@ -121,95 +127,129 @@ public class TravelGood {
 //            flight.setBookingNumber(exceptionMessage);
 //            fuck.add(flight);
 //            return fuck;
-            return new FlightInfoObjectWrapper();
+            return new GetFlightsResponse();
         }
     }
 
-//    @Path("TravelGood/{id}/book")
-//    public static class TravelGoodItinerariesBook {
-//        @GET
-//        @Produces("application/json")
-//        private Response bookItinerary(@PathParam("id") long id) {
-//              System.out.println(id);
-//              return Response.ok().build();
-//        }
-//    }
     @Path("TravelGood/itineraries")
     public static class TravelGoodItineraries {
 
+        @POST
+        @Consumes({MediaType.APPLICATION_JSON})
+        @Produces({MediaType.APPLICATION_JSON})
+        public Response createItineraryREST(String json) {
+            try {
+
+                ObjectMapper mapper = new ObjectMapper();
+                Itinerary_2 i = mapper.readValue(json, Itinerary_2.class);
+                itineraries.add(i);
+                if (itineraries.contains(i)) {
+                    return Response.created(URI.create("TravelGood/itineraries/" + (itineraries.size() - 1))).build();
+                } else {
+                    return Response.notModified().build();
+                }
+            } catch (Exception e) {
+                return Response.notModified().build();
+
+            }
+        }
+
+        @Path("/{id}")
         @GET
         @Produces({MediaType.APPLICATION_JSON})
-        public Map<Long, Itinerary> getAllItineraries() {
-            return itineraries;
-        }
-
-        @POST
-        @Consumes("application/json")
-        @Produces("application/json")
-        public Response createItineraryREST(Itinerary i) {
-            itineraries.put((long) itineraries.keySet().size(), i);
-            return Response.created(URI.create("TravelGood/itineraries/" + (itineraries.keySet().size() - 1))).build();
-        }
-
-        @GET
-        @Path("/{id}")
-        @Produces("application/json")
-        public Response getItineraryREST(@PathParam("id") long id) {
-            if (!itineraries.containsKey(id)) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
-            return Response.ok(itineraries.get(id)).build();
-        }
-
-        @POST
-        @Path("/{id}/book")
-        @Consumes("text/plain")
-        @Produces("application/json")
-        public Response bookItineraryREST(@PathParam("id") long id, String text) {
-            return Response.ok(itineraries.get(id)).build();
-        }
-
-//        @GET
-//        @Path("/{id}/book")
-//        @Produces("application/json")
-//        private Response bookItinerary(@PathParam("id") long id) {
-//              System.out.println(id);
-//              return Response.ok().build();
-////            Itinerary itinerary = itineraries.get(id);
-////            boolean somethingFailed = false;
-////            // Book all hotels
-////            for (String bookingHotel : itinerary.hotelsBookingNumbers) {
-////                try {
-////                    niceView.bookHotel(Integer.parseInt(bookingHotel), creditcard);
-////                } catch (Exception e) {
-////                    somethingFailed = true;
-////                }
-////
-////            }
-////
-////            // Book all flights
-////            for (String bookingFlight : itinerary.flightsBookingNumbers) {
-////                try {
-////                    lameDuck.bookFlights("" + bookingFlight, creditcard);
-////                } catch (Exception e) {
-////                    somethingFailed = true;
-////                }
-////            }
-////
-////            if (somethingFailed) {
-////                cancelItinerary(itinerary);
-////                return Response.status(Response.Status.CONFLICT).build();
-////            }
-////            return Response.accepted().build();
-//        }
-        @POST
-        @Consumes("application/json")
-        @Produces("application/json")
-        private Response cancelItineraryREST(Itinerary itinerary) {
-            boolean success = true;
-            for (HotelReservation bookingHotel : itinerary.hotelsReservations) {
+        public String getItineraryREST(@PathParam("id") int id) {
+            Itinerary_2 i;
+            if (itineraries.size() <= id) {
+                return "{}";
+            } else {
+                i = itineraries.get(id);
+                ObjectMapper m = new ObjectMapper();
                 try {
-                    cancelHotel(bookingHotel.getBookingNumber());
+                    return m.writeValueAsString(i);
+                } catch (Exception e) {
+                    return "{}";
+                }
+            }
+        }
+
+        @Path("/{id}")
+        @DELETE
+        public Response deleteItinerary(@PathParam("id") int id) {
+            if (itineraries.size() <= id) {
+                return Response.status(Response.Status.CONFLICT).build();
+            }
+
+            itineraries.remove(id);
+            return Response.accepted().build();
+        }
+
+        @Path("/{id}/book")
+        @POST
+        @Consumes({MediaType.APPLICATION_JSON})
+        @Produces({MediaType.APPLICATION_JSON})
+        public Response bookItineraryREST(@PathParam("id") int id, CreditCardInfoType creditCard) {
+            Itinerary_2 itinerary = itineraries.get(id);
+            CreditCardInfoType creditcard = creditCard;
+//            ObjectMapper mapper = new ObjectMapper();
+//            try {
+//                creditcard = mapper.readValue(creditCard, CreditCardInfoType.class);
+//
+//            } catch (Exception e) {
+//                return Response.status(Response.Status.CONFLICT).build();
+//
+//            }
+            boolean somethingFailed = false;
+            // Book all hotels
+            for (Booking bookingHotel : itinerary.hotelsReservations) {
+                try {
+                    bookHotel(Integer.parseInt(bookingHotel.getBookingNumber()), creditcard);
+                    bookingHotel.booked = true;
+                    booked_hotels.add(bookingHotel);
+                } catch (Exception e) {
+                    somethingFailed = true;
+                }
+
+            }
+
+            // Book all flights
+            for (Booking bookingFlight : itinerary.flightsBookingNumbers) {
+                try {
+                    bookFlights("" + bookingFlight, creditcard);
+                    bookingFlight.booked = true;
+                    booked_flights.add(bookingFlight);
+                } catch (Exception e) {
+                    somethingFailed = true;
+                }
+            }
+
+            if (somethingFailed) {
+                cancelItineraryREST(id, creditcard);
+                return Response.status(Response.Status.CONFLICT).build();
+            }
+            return Response.accepted().build();
+        }
+
+        @POST
+        @Path("/{id}/cancelBook")
+        @Consumes({MediaType.APPLICATION_JSON})
+        @Produces({MediaType.APPLICATION_JSON})
+        public Response cancelItineraryREST(@PathParam("id") int id, CreditCardInfoType creditCard) {
+          
+
+            boolean success = true;
+            CreditCardInfoType creditcard = creditCard;
+
+            Itinerary_2 i = itineraries.get(id);
+
+            for (Booking bookingHotel : i.hotelsReservations) {
+                try {
+                    if(bookingHotel.getBookingNumber().equals("1"))
+                        throw new Exception();
+                                
+                    bookingHotel.booked = false;
+                    booked_hotels.remove(bookingHotel);
+                    cancelHotel(Integer.parseInt(bookingHotel.getBookingNumber()));
+                    
                 } catch (Exception e) {
                     System.out.println("Something fucked up when cancelling");
                     success = false;
@@ -218,10 +258,12 @@ public class TravelGood {
             }
 
             // Book all flights
-            for (String bookingFlight : itinerary.flightsBookingNumbers) {
+            for (Booking bookingFlight : i.flightsBookingNumbers) {
                 try {
                     // Skal ændres
-                    cancelFlights("" + bookingFlight, 100, creditcard);
+                    bookingFlight.booked = false;
+                    booked_flights.remove(bookingFlight);
+                    cancelFlights(bookingFlight.getBookingNumber(), 100, creditcard);
                 } catch (Exception e) {
                     System.out.println("Something fucked up when cancelling");
                     success = false;
@@ -240,14 +282,21 @@ public class TravelGood {
         @Consumes("application/json")
         @Produces("application/json")
         public Response addHotelREST(
-                @PathParam("id") long id,
+                @PathParam("id") int id,
                 HotelReservation hotelReservation) {
 
-            if (!itineraries.containsKey(id)) {
-                return Response.status(Response.Status.NOT_FOUND).build();
+            if (itineraries.size() - 1 < id) {
+                return Response.status(Response.Status.CONFLICT).build();
             }
-            Itinerary itinerary = itineraries.get(id);
-            itinerary.addHotel(hotelReservation);
+
+            for (Booking book : booked_hotels) {
+                if (book.bookingNumber.equals(hotelReservation.getBookingNumber())) {
+                    return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+                }
+            }
+
+            Itinerary_2 itinerary = itineraries.get(id);
+            itinerary.addHotel("" + hotelReservation.getBookingNumber(), false);
 
 //            return Response.ok().build();
             return Response.created(URI.create("itineraries/" + id + "/hotels/"
@@ -256,62 +305,70 @@ public class TravelGood {
 
         @POST
         @Path("/{id}/flights")
-        @Consumes("text/plain")
+        @Consumes("application/json")
         @Produces("application/json")
         public Response addFlightREST(
-                @PathParam("id") long id,
-                int bookingNumber) {
+                @PathParam("id") int id,
+                FlightInfoObject flight) {
 
-            if (!itineraries.containsKey(id)) {
+            if (itineraries.size() - 1 < id) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
-            Itinerary itinerary = itineraries.get(id);
-            itinerary.addFlight("" + bookingNumber);
+
+            for (Booking book : booked_flights) {
+                if (book.getBookingNumber().equals(flight.getBookingNumber())) {
+                    return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+                }
+            }
+            Itinerary_2 itinerary = itineraries.get(id);
+            itinerary.addFlight(flight.getBookingNumber(), false);
+
             return Response.created(URI.create("itineraries/" + id + "/flights/"
-                    + bookingNumber)).build();
+                    + flight)).build();
         }
 
         @DELETE
         @Path("/{id}/hotels/{bookingNumber}")
         public Response removeHotelREST(
-                @PathParam("id") long id,
-                @PathParam("bookingNumber") int bookingNumber) {
+                @PathParam("id") int id,
+                @PathParam("bookingNumber") String bookingNumber) {
             // Check that the itinerary is there
-            if (!itineraries.containsKey(id)) {
+            if (itineraries.size() - 1 < id) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
-            Itinerary itinerary = itineraries.get(id);
+            Itinerary_2 itinerary = itineraries.get(id);
             // Find the requested hotel
-
-            for (HotelReservation res : itinerary.hotelsReservations) {
-                if (res.getBookingNumber() == bookingNumber) {
-                    itinerary.hotelsReservations.remove(res);
-                    return Response.accepted().build();
-
+            for (Booking book : itinerary.hotelsReservations) {
+                if (book.bookingNumber.equals(bookingNumber)) {
+                    itinerary.hotelsReservations.remove(book);
+                    return Response.status(Response.Status.OK).build();
                 }
             }
 
             return Response.status(Response.Status.NOT_FOUND).build();
-
         }
 
         @DELETE
         @Path("/{id}/flights/{bookingNumber}")
         public Response removeFlightREST(
-                @PathParam("id") long id,
+                @PathParam("id") int id,
                 @PathParam("bookingNumber") String bookingNumber) {
             // Check that the itinerary is there
-            if (!itineraries.containsKey(id)) {
+            if (itineraries.size() - 1 < id) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
-            Itinerary itinerary = itineraries.get(id);
-            // Find the requested hotel
-            if (itinerary.flightsBookingNumbers.contains(bookingNumber)) {
-                itinerary.flightsBookingNumbers.remove(bookingNumber);
-                return Response.accepted().build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).build();
+            Itinerary_2 itinerary = itineraries.get(id);
+            // Find the requested flight
+
+            for (Booking book : itinerary.flightsBookingNumbers) {
+                if (book.bookingNumber.equals(bookingNumber)) {
+                    itinerary.flightsBookingNumbers.remove(book);
+                    return Response.status(Response.Status.OK).build();
+                }
             }
+
+            return Response.status(Response.Status.NOT_FOUND).build();
+
         }
 
     }
@@ -320,18 +377,13 @@ public class TravelGood {
         com.dtu.mmmngg.MainWebService service = new com.dtu.mmmngg.MainWebService();
         com.dtu.mmmngg.LameDuckWebService port = service.getLameDuckWebServicePort();
         return port.bookFlights(bookingNumber, creditCard);
+
     }
 
     private static boolean cancelFlights(java.lang.String bookingnumber, int amount, dk.dtu.imm.fastmoney.types.CreditCardInfoType creditCard) throws CreditCardFaultMessage {
         com.dtu.mmmngg.MainWebService service = new com.dtu.mmmngg.MainWebService();
         com.dtu.mmmngg.LameDuckWebService port = service.getLameDuckWebServicePort();
         return port.cancelFlights(bookingnumber, amount, creditCard);
-    }
-
-    private static FlightInfoObjectWrapper getFlights(java.lang.String from, java.lang.String toDestination, javax.xml.datatype.XMLGregorianCalendar arg2) {
-        com.dtu.mmmngg.MainWebService service = new com.dtu.mmmngg.MainWebService();
-        com.dtu.mmmngg.LameDuckWebService port = service.getLameDuckWebServicePort();
-        return port.getFlights(from, toDestination, arg2);
     }
 
     private static Boolean bookHotel(int bookingNumber, dk.dtu.imm.fastmoney.types.CreditCardInfoType creditcard) throws Exception_Exception {
@@ -346,10 +398,16 @@ public class TravelGood {
         return port.cancelHotel(bookingNumber);
     }
 
-    private static HotelReservationWrapper getHotels(java.lang.String city, javax.xml.datatype.XMLGregorianCalendar arrival, javax.xml.datatype.XMLGregorianCalendar departure) {
+    private static java.util.List<com.niceview.HotelReservation> getHotels(java.lang.String city, javax.xml.datatype.XMLGregorianCalendar arrival, javax.xml.datatype.XMLGregorianCalendar departure) {
         com.niceview.NiceViewService service = new com.niceview.NiceViewService();
         com.niceview.NiceView port = service.getNiceViewPort();
         return port.getHotels(city, arrival, departure);
+    }
+
+    private static java.util.List<com.dtu.mmmngg.FlightInfoObject> getFlights(java.lang.String from, java.lang.String toDestination, javax.xml.datatype.XMLGregorianCalendar arg2) {
+        com.dtu.mmmngg.MainWebService service = new com.dtu.mmmngg.MainWebService();
+        com.dtu.mmmngg.LameDuckWebService port = service.getLameDuckWebServicePort();
+        return port.getFlights(from, toDestination, arg2);
     }
 
 }

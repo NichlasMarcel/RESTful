@@ -10,6 +10,15 @@
 <xsd:import namespace="http://MMMNGG.dtu.com/" schemaLocation="http://localhost:8080/LameDuck/MainWebService?xsd=3"/>
 </xsd:schema>
 </types>
+<message name="WorkAround">
+<part name="parameters" element="tns:WorkAround"/>
+</message>
+<message name="WorkAroundResponse">
+<part name="parameters" element="tns:WorkAroundResponse"/>
+</message>
+<message name="CreditCardFaultMessage">
+<part xmlns:ns1="http://fastmoney.imm.dtu.dk" name="fault" element="ns1:CreditCardFault"/>
+</message>
 <message name="getFlights">
 <part name="parameters" element="tns:getFlights"/>
 </message>
@@ -22,9 +31,6 @@
 <message name="bookFlightsResponse">
 <part name="parameters" element="tns:bookFlightsResponse"/>
 </message>
-<message name="CreditCardFaultMessage">
-<part xmlns:ns1="http://fastmoney.imm.dtu.dk" name="fault" element="ns1:CreditCardFault"/>
-</message>
 <message name="cancelFlights">
 <part name="parameters" element="tns:cancelFlights"/>
 </message>
@@ -32,6 +38,11 @@
 <part name="parameters" element="tns:cancelFlightsResponse"/>
 </message>
 <portType name="LameDuckWebService">
+<operation name="WorkAround">
+<input wsam:Action="http://MMMNGG.dtu.com/LameDuckWebService/WorkAroundRequest" message="tns:WorkAround"/>
+<output wsam:Action="http://MMMNGG.dtu.com/LameDuckWebService/WorkAroundResponse" message="tns:WorkAroundResponse"/>
+<fault message="tns:CreditCardFaultMessage" name="CreditCardFaultMessage" wsam:Action="http://MMMNGG.dtu.com/LameDuckWebService/WorkAround/Fault/CreditCardFaultMessage"/>
+</operation>
 <operation name="getFlights">
 <input wsam:Action="http://MMMNGG.dtu.com/LameDuckWebService/getFlightsRequest" message="tns:getFlights"/>
 <output wsam:Action="http://MMMNGG.dtu.com/LameDuckWebService/getFlightsResponse" message="tns:getFlightsResponse"/>
@@ -49,6 +60,18 @@
 </portType>
 <binding name="LameDuckWebServicePortBinding" type="tns:LameDuckWebService">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="WorkAround">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="CreditCardFaultMessage">
+<soap:fault name="CreditCardFaultMessage" use="literal"/>
+</fault>
+</operation>
 <operation name="getFlights">
 <soap:operation soapAction=""/>
 <input>
